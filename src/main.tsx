@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
+import './index.css';
 import { SamplePlugin } from './sample-plugin';
 
 // Standalone dev mode - renders the plugin with a mock runCypher for local testing
@@ -17,5 +18,10 @@ const mockRunCypher = async (query: string) => {
   };
 };
 
-const root = createRoot(document.getElementById('root')!);
+const themeClass = 'ndl-theme-light';
+
+const rootEl = document.getElementById('root')!;
+rootEl.className = themeClass;
+
+const root = createRoot(rootEl);
 root.render(<SamplePlugin runCypher={mockRunCypher} />);

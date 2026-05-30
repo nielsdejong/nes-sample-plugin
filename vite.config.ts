@@ -1,19 +1,23 @@
 import { federation } from '@module-federation/vite';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react(),
     federation({
-      name: 'sample_plugin',
+      name: 'sample-plugin',
       filename: 'remoteEntry.js',
       exposes: {
         './plugin': './src/plugin.tsx',
       },
       shared: {
-        react: { singleton: true },
-        'react-dom': { singleton: true },
+        react: { singleton: true, requiredVersion: '^19.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
+        'react-dom/client': { singleton: true, requiredVersion: '^19.0.0' },
+        'react/jsx-runtime': { singleton: true, requiredVersion: '^19.0.0' },
       },
     }),
   ],

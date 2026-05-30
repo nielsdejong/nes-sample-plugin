@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Banner, CodeBlock, Flex, FilledButton, TextArea, Typography } from '@neo4j-ndl/react';
+
 import type { CypherRecord, PluginProps } from './types';
 
 export function SamplePlugin({ runCypher }: PluginProps) {
@@ -24,74 +26,47 @@ export function SamplePlugin({ runCypher }: PluginProps) {
   };
 
   return (
-    <div className="ndl-theme-light flex h-full flex-col gap-4 p-6">
-      <h1 className="n-text-palette-neutral-text-default text-2xl font-semibold">Sample Query Plugin</h1>
-      <p className="n-text-palette-neutral-text-weak text-sm">
-        This plugin demonstrates how to run Cypher queries using the shared Neo4j connection.
-      </p>
+    <Flex flexDirection="column" gap="6" className="h-full p-6">
+        <Flex flexDirection="column" gap="2">
+          <Typography variant="subheading-large">Sample Query Plugin</Typography>
+          <Typography variant="body-medium" className="n-text-palette-neutral-text-weak">
+            This plugin demonstrates how to run Cypher queries using the shared Neo4j connection.
+          </Typography>
+        </Flex>
 
-      <div className="flex flex-col gap-2">
-        <label className="n-text-palette-neutral-text-default text-sm font-medium">Cypher Query</label>
-        <textarea
-          className="n-bg-palette-neutral-bg-weak n-text-palette-neutral-text-default rounded-md border border-neutral-300 p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows={3}
+        <TextArea
+          label="Cypher Query"
+          isFluid
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          htmlAttributes={{
+            rows: 3,
+            onChange: (e) => setQuery(e.target.value),
+            style: { fontFamily: 'monospace' },
+          }}
         />
-      </div>
 
-      <button
-        className="n-bg-palette-primary-bg-strong n-text-palette-primary-text-inverse w-fit rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
-        onClick={handleRun}
-        disabled={loading || !query.trim()}
-      >
-        {loading ? 'Running...' : 'Run Query'}
-      </button>
+        <FilledButton onClick={handleRun} isLoading={loading} isDisabled={!query.trim()}>
+          Run Query
+        </FilledButton>
 
-      {error && (
-        <div className="n-bg-palette-danger-bg-weak rounded-md border border-red-200 p-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+        {error && (
+          <Banner variant="danger">
+            <Banner.Header>Query Error</Banner.Header>
+            <Banner.Description>{error}</Banner.Description>
+          </Banner>
+        )}
 
-      {results.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h2 className="n-text-palette-neutral-text-default text-sm font-medium">
-            Results ({results.length} records)
-          </h2>
-          <div className="overflow-auto rounded-md border">
-            <table className="w-full text-left text-sm">
-              <thead className="n-bg-palette-neutral-bg-weak">
-                <tr>
-                  {results[0].keys.map((key) => (
-                    <th key={key} className="n-text-palette-neutral-text-default border-b px-3 py-2 font-medium">
-                      {key}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((record, i) => (
-                  <tr key={i} className="border-b last:border-b-0">
-                    {record.values.map((val, j) => (
-                      <td key={j} className="n-text-palette-neutral-text-default px-3 py-2">
-                        {formatValue(val)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
+        {results.length > 0 && (
+          <Flex flexDirection="column" gap="4">
+            <Typography variant="body-medium">
+              Results ({results.length} records)
+            </Typography>
+            <CodeBlock
+              code={JSON.stringify(results.map((r) => r.toObject()), null, 2)}
+              language="json"
+            />
+          </Flex>
+        )}
+      </Flex>
   );
-}
-
-function formatValue(val: unknown): string {
-  if (val === null || val === undefined) return 'null';
-  if (Array.isArray(val)) return JSON.stringify(val);
-  if (typeof val === 'object') return JSON.stringify(val);
-  return String(val);
 }
