@@ -1,7 +1,9 @@
 import { createRoot } from 'react-dom/client';
 
-import './index.css';
-import { SamplePlugin } from './sample-plugin';
+import '@neo4j-ndl/base/lib/neo4j-ds-styles.css';
+import { NeedleThemeProvider, SideNavigation, Typography } from '@neo4j-ndl/react';
+import { PuzzlePieceIconOutline } from '@neo4j-ndl/react/icons';
+import { SamplePlugin } from './plugin';
 
 // Standalone dev mode - renders the plugin with a mock runCypher for local testing
 const mockRunCypher = async (query: string) => {
@@ -18,10 +20,58 @@ const mockRunCypher = async (query: string) => {
   };
 };
 
-const themeClass = 'ndl-theme-light';
+const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-const rootEl = document.getElementById('root')!;
-rootEl.className = themeClass;
+function DevShell() {
+  return (
+    <NeedleThemeProvider
+      theme={theme}
+      wrapperProps={{
+        style: { height: '100vh', display: 'flex', flexDirection: 'column' },
+        isWrappingChildren: true,
+      }}
+    >
+      {/* Header */}
+      <header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          height: '48px',
+          flexShrink: 0,
+          padding: '0 16px',
+          backgroundColor: 'var(--theme-color-neutral-bg-weak)',
+          borderBottom: '1px solid var(--theme-color-neutral-border-weak)',
+        }}
+      >
+        <Typography variant="subheading-medium">Enterprise Studio</Typography>
+        <Typography variant="body-small" style={{ opacity: 0.6 }}>(Plugin Development Mock)</Typography>
+      </header>
+      {/* Body */}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        {/* Sidebar */}
+        <SideNavigation isExpanded={true} expandedWidth={212} ariaLabel="Main side navigation">
+          <SideNavigation.CategoryHeader>Plugins</SideNavigation.CategoryHeader>
+          <SideNavigation.ListItem>
+            <SideNavigation.NavItem
+              icon={<PuzzlePieceIconOutline />}
+              label="Sample Plugin"
+              isActive={true}
+            />
+          </SideNavigation.ListItem>
+        </SideNavigation>
+        {/* Main content */}
+        <main style={{ flex: 1, overflow: 'auto', backgroundColor: 'var(--theme-color-neutral-bg-default)' }}>
+          <SamplePlugin runCypher={mockRunCypher} />
+        </main>
+      </div>
+    </NeedleThemeProvider>
+  );
+}
 
-const root = createRoot(rootEl);
-root.render(<SamplePlugin runCypher={mockRunCypher} />);
+function bootstrap() {
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<DevShell />);
+}
+
+bootstrap();
