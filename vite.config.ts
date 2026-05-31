@@ -27,10 +27,15 @@ export default defineConfig(({ command }) => ({
   ],
   server: {
     port: 3002,
+    strictPort: true,
     cors: true,
+    hmr: {
+      port: 3002,
+    },
   },
   preview: {
     port: 3001,
+    strictPort: true,
     cors: true,
   },
   build: {
