@@ -21,7 +21,8 @@ const mockRunCypher = async (query: string) => {
 };
 
 const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-
+// This is just a wrapper to simulate the Enterprise Studio environment for local development.
+// In production, the plugin will be rendered by the host app and should not include this wrapper.
 function DevShell() {
   return (
     <NeedleThemeProvider

@@ -1,9 +1,8 @@
 import { useState } from 'react';
-
 import { Banner, CodeBlock, Flex, FilledButton, TextArea, Typography } from '@neo4j-ndl/react';
-
 import type { CypherRecord, PluginProps, StudioPlugin } from './types';
 
+// This is the main plugin component that will be rendered inside Enterprise Studio.
 export function SamplePlugin({ runCypher }: PluginProps) {
   const [query, setQuery] = useState('MATCH (n) RETURN labels(n) AS labels, count(n) AS count');
   const [results, setResults] = useState<CypherRecord[]>([]);
